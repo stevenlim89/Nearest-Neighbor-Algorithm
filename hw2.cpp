@@ -15,7 +15,7 @@ struct Order
 {
     bool operator()(Pair const& a, Pair const& b) const
     {
-        return a.first > b.first;
+        return a.first >= b.first;
     }
 };
 
@@ -69,7 +69,7 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
 
         //cout << "This is the test_set label: " << test_set[index][test_set[index].size()-1] << endl;
         if (temp != test_set[index][test_set[index].size()-1]){
-            cout << "This is the index: " << index << " temp:" << test_set[index][test_set[index].size()-1] << endl;
+            //cout << "This is the index: " << index << " temp:" << test_set[index][test_set[index].size()-1] << endl;
            errorCount++; 
         }
             
@@ -85,8 +85,7 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
 
 }
 
-int main() {
-
+vector< vector<int> > fileToMatrix(string filename){
     char delimiter = ' ';
 
     // feature vector
@@ -105,7 +104,7 @@ int main() {
     int count = 0;
 
     ifstream trainfile; 
-    trainfile.open("hw2train.txt");
+    trainfile.open(filename);
 
     //check to see if the file is opened:
     if (trainfile.is_open())
@@ -136,15 +135,22 @@ int main() {
 
         }     
     }
-
     trainfile.close();
 
-    /* Testing purposes
-    for(int i = 0; i < featureMatrix[2].size(); i++){
-        cout<<featureMatrix[2][i] << endl;
-    }*/
+    return featureMatrix;
+}
 
-    double value = nearestNeighborError(featureMatrix, featureMatrix, 1);
+int main() {
+
+    string trainingFile = "hw2train.txt";
+    string validateFile = "hw2validate.txt";
+    string testFile = "hw2test.txt";
+
+    vector< vector<int> > trainingMatrix = fileToMatrix(trainingFile);
+    vector< vector<int> > validateMatrix = fileToMatrix(validateFile);
+    vector< vector<int> > testMatrix = fileToMatrix(testFile);
+
+    double value = nearestNeighborError(trainingMatrix, trainingMatrix, 21);
 
     cout << "This is the error: " << value << endl;
    
