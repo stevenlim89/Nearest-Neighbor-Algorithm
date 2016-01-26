@@ -40,6 +40,9 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
     int errorCount = 0;
     int distCounter = 0;
 
+    double confusion[10][10];
+    int labelCount[10];
+
     // Get distance and label to put in pair
     for(int index = 0; index < test_set.size(); index++){
         for(int ts = 0; ts < training_set.size(); ts++){
@@ -50,9 +53,10 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
            queue.push(p);
         }
 
+        labelCount[label]++;
+        
         for(int i = 0; i < k; i++){
             labelArray[queue.top().second]++;
-            //cout << "Queue size: " <<  queue.top().second << endl; 
             queue.pop();
         }
 
@@ -66,9 +70,12 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
         }
 
         highestCount = 0;
+        
+        int testIndexLabel = test_set[index][test_set[index].size()-1];
 
-        //cout << "This is the test_set label: " << test_set[index][test_set[index].size()-1] << endl;
-        if (temp != test_set[index][test_set[index].size()-1]){
+        confusion[temp][testIndexLabel]++;
+
+        if (temp != testIndexLabel){
             //cout << "This is the index: " << index << " temp:" << test_set[index][test_set[index].size()-1] << endl;
            errorCount++; 
         }
@@ -79,8 +86,19 @@ double nearestNeighborError(vector< vector<int> > training_set, vector < vector<
         }
 
         temp = 0;
+        
+        //memset(confusion, 0, sizeof(confusion));
+        //memset(labelCount, 0, sizeof(labelCount));
     }
 
+
+    for(int i = 0; i < 10; i++){
+            for(int j = 0; j < 10; j++){
+                confusion[i][j] = confusion[i][j]/labelCount[j];
+                cout << " " << confusion[i][j];
+            }
+             cout << endl;
+    }
     return (double)errorCount/test_set.size();
 
 }
@@ -150,7 +168,8 @@ int main() {
     vector< vector<int> > validateMatrix = fileToMatrix(validateFile);
     vector< vector<int> > testMatrix = fileToMatrix(testFile);
 
-    double value = nearestNeighborError(trainingMatrix, trainingMatrix, 21);
+
+    double value = nearestNeighborError(trainingMatrix, testMatrix, 3);
 
     cout << "This is the error: " << value << endl;
    
